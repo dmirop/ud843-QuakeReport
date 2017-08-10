@@ -136,6 +136,7 @@ public final class QueryUtils {
         return earthquakes;
     }
     public static List<Earthquake> fetchEarthquakeData(String requestUrl){
+
         URL url = createUrl(requestUrl);
 
         String jsonResponse = null;
