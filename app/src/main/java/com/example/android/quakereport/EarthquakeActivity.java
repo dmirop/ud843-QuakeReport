@@ -15,9 +15,7 @@
  */
 package com.example.android.quakereport;
 
-import android.app.LoaderManager;
-import android.content.Loader;
-import android.app.LoaderManager.LoaderCallbacks;
+
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -40,19 +38,18 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.List;
+
 
 import static android.view.View.GONE;
 
-public class EarthquakeActivity extends AppCompatActivity implements LoaderCallbacks<List<Earthquake>> {
+public class EarthquakeActivity extends AppCompatActivity {
 
-    private RequestQueue mQueue;
+    //private RequestQueue mQueue;
     private ArrayList<Earthquake> mEarthquakes = new ArrayList<Earthquake>();
 
     public static final String LOG_TAG = EarthquakeActivity.class.getName();
-    private static final String USGS_REQUEST_URL = "https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&orderby=time&minmag=6&limit=10";
+    private static final String USGS_REQUEST_URL = "https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&orderby=magnitude&minmag=4&limit=25";
 
-    private static final int EARTHQUAKE_LOADER_ID = 1;
     private EarthquakeAdapter mAdapter;
     private TextView mEmptyStateTextView;
 
@@ -60,7 +57,7 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderCallb
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mQueue = VolleySingleton.getInstance(this.getApplicationContext()).getRequestQueue();
+        //mQueue = VolleySingleton.getInstance(this.getApplicationContext()).getRequestQueue();
 
         setContentView(R.layout.earthquake_activity);
 
@@ -91,8 +88,6 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderCallb
 
         if (networkInfo != null && networkInfo.isConnected()){
 
-        //LoaderManager loaderManager = getLoaderManager();
-        //loaderManager.initLoader(EARTHQUAKE_LOADER_ID, null, this);
             JsonObjectRequest jsObjRequest = new JsonObjectRequest
                     (Request.Method.GET, USGS_REQUEST_URL, null, new Response.Listener<JSONObject>(){
                         @Override
@@ -122,33 +117,5 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderCallb
             mEmptyStateTextView.setText(R.string.no_internet);
         }
     }
-
-    @Override
-    public Loader<List<Earthquake>> onCreateLoader(int i, Bundle bundle) {
-        return null;
-        //return new EarthquakeLoader(this, USGS_REQUEST_URL);
-    }
-
-    @Override
-    public void onLoadFinished(Loader<List<Earthquake>> loader, List<Earthquake> earthquakes) {
-
-        View progressBar = findViewById(R.id.loading_spinner);
-        progressBar.setVisibility(GONE);
-
-        mEmptyStateTextView.setText(R.string.no_earthquakes);
-
-        mAdapter.clear();
-
-        if (earthquakes != null && !earthquakes.isEmpty()){
-            mAdapter.addAll(earthquakes);
-        }
-    }
-
-    @Override
-    public void onLoaderReset(Loader<List<Earthquake>> loader) {
-        mAdapter.clear();
-
-    }
-
 
 }
