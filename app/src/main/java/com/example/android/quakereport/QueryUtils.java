@@ -97,8 +97,8 @@ public final class QueryUtils {
      * Return a list of {@link Earthquake} objects that has been built up from
      * parsing a JSON response.
      */
-    public static ArrayList<Earthquake> extractFeatureFromJson(String earthquakeJSON) {
-        if (TextUtils.isEmpty(earthquakeJSON)){return null;}
+    public static ArrayList<Earthquake> extractFeatureFromJson(JSONObject earthquakeJSON) {
+        if (earthquakeJSON == null){return null;}
         // Create an empty ArrayList that we can start adding earthquakes to
         ArrayList<Earthquake> earthquakes = new ArrayList<>();
 
@@ -107,9 +107,7 @@ public final class QueryUtils {
         // Catch the exception so the app doesn't crash, and print the error message to the logs.
         try {
 
-            JSONObject baseJsonResponse = new JSONObject(earthquakeJSON);
-
-            JSONArray earthquakeArray = baseJsonResponse.getJSONArray("features");
+            JSONArray earthquakeArray = earthquakeJSON.getJSONArray("features");
 
             for (int p = 0; p < earthquakeArray.length(); p++){
                 JSONObject currentEarthquake = earthquakeArray.getJSONObject(p);
@@ -133,22 +131,6 @@ public final class QueryUtils {
         }
 
         // Return the list of earthquakes
-        return earthquakes;
-    }
-    public static List<Earthquake> fetchEarthquakeData(String requestUrl){
-
-        URL url = createUrl(requestUrl);
-
-        String jsonResponse = null;
-
-        try{
-            jsonResponse = makeHttpRequest(url);
-        } catch (IOException e){
-            Log.e(LOG_TAG, "Problem making the HTTP request.", e);
-        }
-
-        List<Earthquake> earthquakes = extractFeatureFromJson(jsonResponse);
-
         return earthquakes;
     }
 }
